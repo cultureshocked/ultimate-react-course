@@ -142,3 +142,215 @@ function getBooks() {
 function getBook(id) {
   return data.find((d) => d.id === id);
 }
+
+//Destructuring
+{
+  const book = getBook(2);
+  const { title, author, genres } = book;
+  const [primaryGenre, secondaryGenre] = genres; // Assign [[0], [1]]
+}
+
+// Rest/spread
+{
+  //Rest
+  const book = getBook(2);
+  const { title, author, genres } = book;
+  const [primaryGenre, secondaryGenre, ...otherGenres] = genres; //only works for last element of destructuring
+  console.log(otherGenres);
+
+  //Spread
+  const newGenres = [...genres, "epic fantasy"]; //equivalent to ruby flatten; can be placed anywhere in parent list
+  console.log(newGenres);
+  const updatedBook = {
+    ...book, //flattens objects as well
+    moviePublicationDate: "2001-12-19",
+    pages: 1210, //can overwrite properties as well; latest property is final
+  };
+  console.log(updatedBook);
+}
+
+// Template literals
+{
+  const book = getBook(2);
+  const { title, author, genres, pages, publicationDate } = book;
+  const summary = `${title} is a book with ${pages} pages written by ${author} and published in ${
+    publicationDate.split("-")[0]
+  }`;
+}
+
+// Ternary Operator
+{
+  const book = getBook(2);
+  const { title, author, genres, pages, publicationDate, hasMovieAdaptation } =
+    book;
+  const pagesRange = pages > 1000 ? "over a thousand" : "1000 or less";
+  console.log(`The book has ${pagesRange} pages.`);
+  console.log(
+    `The book has ${hasMovieAdaptation ? "" : "not "}been adapted to a movie.`
+  );
+}
+
+// Arrow functions
+{
+  const book = getBook(2);
+  const { title, author, genres, pages, publicationDate, hasMovieAdaptation } =
+    book;
+  const getYear = (pubDate) => {
+    return pubDate.split("-")[0];
+  };
+  console.log(
+    `${title} was published in the year ${getYear(publicationDate)}.`
+  );
+}
+
+// Logical Operators + Short-circuiting
+{
+  const book = getBook(2);
+  const { title, author, genres, pages, publicationDate, hasMovieAdaptation } =
+    book;
+  // Short rundown: the logical operators && and || actually return their operands, NOT a converted T/F
+  console.log(true && "Some String");
+  console.log(false && "Some String");
+  console.log("Some String" || "true"); // note second operand is a string as well
+  console.log("" || "Some String"); // no shortcircuit
+}
+
+// Optional Chaining
+{
+  const book = getBook(3); //book 3 does not have librarything reviews
+  const {
+    title,
+    author,
+    genres,
+    pages,
+    publicationDate,
+    hasMovieAdaptation,
+    reviews,
+  } = book;
+
+  const getTotalReviewCount = (b) => {
+    const goodReads = b.reviews.goodreads.reviewsCount;
+    const librarything = b.reviews.librarything?.reviewsCount ?? 0;
+    return goodReads + librarything;
+  };
+  console.log(getTotalReviewCount(book));
+}
+
+// Array.map
+{
+  const books = getBooks();
+  const ids = books.map((book) => {
+    return book.id;
+  });
+  const titles = books.map((book) => {
+    return book.title;
+  });
+  const authors = books.map((book) => {
+    return book.author;
+  });
+  const essentialData = books.map((book) => ({
+    title: book.title,
+    author: book.author,
+  }));
+  console.log(ids);
+  console.log(titles);
+  console.log(authors);
+  console.log(essentialData);
+}
+
+// Array.filter
+{
+  const books = getBooks();
+  const longBooks = books
+    .filter((book) => book.pages > 500)
+    .filter((book) => book.hasMovieAdaptation);
+  const adventureBooks = books
+    .filter((book) => book.genres.includes("adventure"))
+    .map((book) => book.title);
+  console.log(adventureBooks);
+  console.log(longBooks);
+}
+
+// Array.reduce
+{
+  const books = getBooks();
+  const totalPages = books.reduce((sum, book) => {
+    return sum + book.pages;
+  }, 0);
+  console.log(totalPages);
+}
+
+// Array.sort
+{
+  const books = getBooks();
+  const sortedByPagesAsc = books
+    .sort((a, b) => a.pages - b.pages)
+    .map((book) => ({
+      title: book.title,
+      pages: book.pages,
+    }));
+  const sortedByPagesDesc = books
+    .sort((a, b) => b.pages - a.pages)
+    .map((book) => ({
+      title: book.title,
+      pages: book.pages,
+    }));
+  const sortedByTitleAsc = books
+    .sort((a, b) => a.title.localeCompare(b.title))
+    .map((book) => ({
+      title: book.title,
+      pages: book.pages,
+    }));
+  const sortedByTitleDesc = books
+    .sort((a, b) => b.title.localeCompare(a.title))
+    .map((book) => ({
+      title: book.title,
+      pages: book.pages,
+    }));
+  console.log(sortedByPagesAsc);
+  console.log(sortedByPagesDesc);
+  console.log(sortedByTitleAsc);
+  console.log(sortedByTitleDesc);
+}
+
+// Immutability
+{
+  const newBook = {
+    id: 6,
+    title: "Harry Potter and the Chamber of Secrets",
+    author: "J.K. Rowling",
+  };
+
+  const booksAfterAdd = [...getBooks(), newBook];
+  booksAfterAdd;
+
+  const booksAfterDelete = booksAfterAdd.filter((book) => {
+    return book.id !== 6;
+  });
+  console.log(booksAfterDelete.length);
+
+  const booksAfterUpdate = booksAfterDelete.map((book) => {
+    return book.id === 1 ? { ...book, pages: 1 } : book;
+  });
+  console.log(booksAfterUpdate);
+}
+
+// Promises
+{
+  const url = "https://jsonplaceholder.typicode.com/todos/1";
+  const response = fetch(url)
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.log(err));
+  console.log("Hello");
+}
+
+// Async/Await
+const getTodos = async () => {
+  const url = "https://jsonplaceholder.typicode.com/todos/1";
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log(data);
+};
+
+getTodos();
