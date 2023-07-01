@@ -66,48 +66,71 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza pizza={0} />
-      <Pizza pizza={1} />
-      <Pizza pizza={2} />
-      <Pizza pizza={3} />
-      <Pizza pizza={4} />
-      <Pizza pizza={5} />
+
+      {pizzas.length > 0 ? (
+        <>
+          <p>
+            Authentic Italian cuisine. Six creative dishes to choose from. All
+            from our stone oven, all organic, all delicious.
+          </p>
+          <ul className="pizzas">
+            {pizzas.map((pizza) => (
+              <Pizza entry={pizza} />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>We're still working on our menu. Please check back soon!</p>
+      )}
     </main>
   );
 }
 
 function Footer() {
   const hour = new Date().getHours();
-  const openHours = 12;
+  const openHours = 11;
   const closeHours = 22;
   const isOpen = openHours < hour && closeHours > hour;
   return (
     <footer className="footer">
-      It's {new Date().toLocaleTimeString()}.{" "}
-      {isOpen
-        ? "We're currently open!"
-        : "We're closed now, but we open at 12:00PM tomorrow!"}
+      {isOpen ? <Order c={closeHours} /> : <Closed o={openHours} />}
     </footer>
   );
 }
 
-function Pizza(props) {
-  const { name, ingredients, price, photoName, soldOut } =
-    pizzaData[props.pizza];
+function Order(props) {
   return (
-    <div>
-      <img alt={name} src={photoName} width="200" height="200" />
-      <h3>
-        {name}{" "}
-        {soldOut ? <span style={{ color: "red" }}>SOLD OUT!</span> : null}
-      </h3>
-      <p>
-        {ingredients} <strong>{price}</strong>
-      </p>
+    <div className="order">
+      <p>We're open until {props.c}:00! Come visit us or order online.</p>
+      <button className="btn">Order</button>
     </div>
+  );
+}
+
+function Closed(props) {
+  return (
+    <p>
+      Sorry, we're closed until {props.o}:00. We're happy to take your order
+      then.
+    </p>
+  );
+}
+
+function Pizza(props) {
+  const { name, ingredients, price, photoName, soldOut } = props.entry;
+  return (
+    <li className={`pizza ${soldOut ? "sold-out" : ""}`}>
+      <img alt={name} src={photoName} />
+      <div>
+        <h3>{name}</h3>
+        <p>{ingredients}</p>
+        <strong>{soldOut ? "SOLD OUT" : price}</strong>
+      </div>
+    </li>
   );
 }
 
