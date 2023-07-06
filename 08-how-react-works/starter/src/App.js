@@ -18,9 +18,9 @@ const content = [
   },
 ];
 
-console.log(<DifferentContent />); //Renders to component tree; type is DifferentContent
+// console.log(<DifferentContent />); //Renders to component tree; type is DifferentContent
 //does not render into the component tree; only the actual HTML is returned; cannot manage its own state, typeof <div>
-console.log(DifferentContent());
+// console.log(DifferentContent());
 export default function App() {
   return (
     <div>
@@ -67,7 +67,24 @@ function TabContent({ item }) {
   const [likes, setLikes] = useState(0);
 
   function handleInc() {
-    setLikes(likes + 1);
+    setLikes((likes) => likes + 1);
+  }
+
+  // console.log("Render"); //uncomment to see every re-render
+
+  function handleUndo() {
+    setShowDetails(true);
+    setLikes(0);
+  }
+
+  function handleTripleInc() {
+    setLikes((likes) => likes + 1);
+    setLikes((likes) => likes + 1);
+    setLikes((likes) => likes + 1);
+  }
+
+  function handleUndoLater() {
+    setTimeout(handleUndo, 2000); //batched inside timeout in react18, not in react17 (17 will trigger two renders)
   }
 
   return (
@@ -83,13 +100,13 @@ function TabContent({ item }) {
         <div className="hearts-counter">
           <span>{likes} ❤️</span>
           <button onClick={handleInc}>+</button>
-          <button>+++</button>
+          <button onClick={handleTripleInc}>+++</button>
         </div>
       </div>
 
       <div className="tab-undo">
-        <button>Undo</button>
-        <button>Undo in 2s</button>
+        <button onClick={handleUndo}>Undo</button>
+        <button onClick={handleUndoLater}>Undo in 2s</button>
       </div>
     </div>
   );
