@@ -18,6 +18,9 @@ const content = [
   },
 ];
 
+console.log(<DifferentContent />); //Renders to component tree; type is DifferentContent
+//does not render into the component tree; only the actual HTML is returned; cannot manage its own state, typeof <div>
+console.log(DifferentContent());
 export default function App() {
   return (
     <div>
@@ -39,7 +42,8 @@ function Tabbed({ content }) {
       </div>
 
       {activeTab <= 2 ? (
-        <TabContent item={content.at(activeTab)} />
+        // using new key resets state by regenerating entire component
+        <TabContent item={content.at(activeTab)} key={activeTab} />
       ) : (
         <DifferentContent />
       )}
