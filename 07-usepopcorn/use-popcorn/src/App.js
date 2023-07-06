@@ -50,16 +50,22 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-function Search() {
-  const [query, setQuery] = useState("");
+function Search({ setQuery }) {
+  const [input, setInput] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setQuery(input);
+  };
   return (
-    <input
-      className="search"
-      type="text"
-      placeholder="Search movies..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-    />
+    <form onSubmit={handleSubmit}>
+      <input
+        className="search"
+        type="text"
+        placeholder="Search movies..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+    </form>
   );
 }
 
@@ -188,28 +194,71 @@ function WatchedSummary({ watched }) {
   );
 }
 
+function Loader() {
+  return <p className="loader">Loading...</p>;
+}
+
+function ErrorMessage({ msg }) {
+  return <p className="error">⛔{msg}⛔</p>;
+}
+
 const KEY = "3592dc3a";
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
 
-  useEffect(function () {
-    fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=akira`)
-      .then((res) => res.json())
-      .then((data) => setMovies(data.Search));
-  }, []);
+  useEffect(
+    function () {
+      async function fetchMovieList() {
+        setError("");
+        if (query === "") return;
+        try {
+          setIsLoading(true);
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+          if (!res.ok) {
+            throw new Error("Something went wrong. Check your connection.");
+          }
+          const data = await res.json();
+
+          if (data.Response === "False")
+            throw new Error("No results for the provided search.");
+          setMovies(data.Search);
+        } catch (err) {
+          console.log(err);
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      if (query.length < 3) {
+        setMovies([]);
+        setError("");
+        return;
+      }
+      fetchMovieList();
+    },
+    [query]
+  );
 
   return (
     <>
       <NavBar>
         <Logo />
-        <Search />
+        <Search setQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main>
         <Box>
-          <MovieList movies={movies} />
+          {isLoading ? <Loader /> : null} {/* Loading*/}
+          {!isLoading && !error ? <MovieList movies={movies} /> : null}{" "}
+          {/* No load, no err*/}
+          {error ? <ErrorMessage msg={error} /> : null} {/* err */}
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
