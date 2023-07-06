@@ -27,6 +27,7 @@ export default function StarRating({
   className = "",
   messages = [],
   defaultRating = 0,
+  onSetRating = function () {},
 }) {
   const [rating, setRating] = useState(
     defaultRating <= maxRating ? defaultRating : 0
@@ -34,6 +35,7 @@ export default function StarRating({
   const [tempRating, setTempRating] = useState(0);
   const handleRating = (rating) => {
     setRating(rating);
+    onSetRating(rating);
   };
   const textStyle = {
     lineHeight: "1",
