@@ -1,7 +1,9 @@
-import { useQuiz } from "../contexts/QuizContext";
-
-export default function FinishScreen() {
-  const { points, maxPoints, dispatch, highscore } = useQuiz();
+export default function FinishScreen({
+  points,
+  maxPoints,
+  dispatch,
+  highscore,
+}) {
   return (
     <>
       <p className="result">
