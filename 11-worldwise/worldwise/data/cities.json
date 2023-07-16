@@ -35,6 +35,42 @@
         "lng": 13.376933665713324
       },
       "id": 98443197
+    },
+    {
+      "cityName": "Castello de la Plana",
+      "country": "Spain",
+      "emoji": "🇪🇸",
+      "date": "2023-07-15T06:51:57.579Z",
+      "notes": "test\n",
+      "position": {
+        "lat": "40.00644818014026",
+        "lng": "-0.043087005615234375"
+      },
+      "id": 98443198
+    },
+    {
+      "cityName": "Warsaw",
+      "country": "Poland",
+      "emoji": "🇵🇱",
+      "date": "2023-07-15T07:30:07.224Z",
+      "notes": "huge",
+      "position": {
+        "lat": "52.26815737376817",
+        "lng": "20.983886718750004"
+      },
+      "id": 98443202
+    },
+    {
+      "cityName": "Taloga-Leedey",
+      "country": "United States of America (the)",
+      "emoji": "🇺🇸",
+      "date": "2023-07-15T07:31:11.236Z",
+      "notes": "a",
+      "position": {
+        "lat": "35.9602229692967",
+        "lng": "-99.31640625000001"
+      },
+      "id": 98443203
     }
   ]
 }

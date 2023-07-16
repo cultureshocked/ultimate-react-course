@@ -2,7 +2,10 @@ import styles from "./CountryList.module.css";
 import Spinner from "./Spinner";
 import CountryItem from "./CountryItem";
 import Message from "./Message";
-export default function CountryList({ cities, isLoading }) {
+import { useCities } from "../contexts/CityContext";
+
+export default function CountryList() {
+  const { cities, isLoading } = useCities();
   if (isLoading) return <Spinner />;
   if (cities.length == 0)
     return (
@@ -16,6 +19,7 @@ export default function CountryList({ cities, isLoading }) {
       })
     ),
   ];
+  console.log(countries);
   return (
     <ul className={styles.countryList}>
       {countries.map((country) => (
