@@ -1,5 +1,5 @@
-import { useState, memo } from "react";
-// import clickSound from "./ClickSound.m4a";
+import { useState, memo, useCallback, useEffect } from "react";
+import clickSound from "./ClickSound.m4a";
 
 const Calculator = memo(function Calculator({ workouts, allowSound }) {
   const [number, setNumber] = useState(workouts.at(0).numExercises);
@@ -7,15 +7,44 @@ const Calculator = memo(function Calculator({ workouts, allowSound }) {
   const [speed, setSpeed] = useState(90);
   const [durationBreak, setDurationBreak] = useState(5);
 
-  const duration = (number * sets * speed) / 60 + (sets - 1) * durationBreak;
+  //const duration = (number * sets * speed) / 60 + (sets - 1) * durationBreak;
+
+  const [duration, setDuration] = useState(0);
   const mins = Math.floor(duration);
   const seconds = (duration - mins) * 60;
 
-  // const playSound = function () {
-  //   if (!allowSound) return;
-  //   const sound = new Audio(clickSound);
-  //   sound.play();
-  // };
+  const playSound = useCallback(
+    function () {
+      if (!allowSound) return;
+      const sound = new Audio(clickSound);
+      sound.play();
+    },
+    [allowSound]
+  );
+
+  useEffect(
+    function () {
+      setDuration((number * sets * speed) / 60 + (sets - 1) * durationBreak);
+    },
+    [sets, speed, durationBreak, number]
+  );
+
+  useEffect(() => playSound(), [playSound, duration]);
+
+  useEffect(
+    function () {
+      document.title = `Your ${number}-exercise workout`;
+    },
+    [number]
+  );
+
+  const handleInc = useCallback(() => {
+    setDuration((duration) => Math.floor(duration) + 1);
+  }, []);
+
+  const handleDec = useCallback(() => {
+    setDuration((duration) => (duration > 1 ? Math.floor(duration) - 1 : 0));
+  }, []);
 
   return (
     <>
@@ -66,13 +95,13 @@ const Calculator = memo(function Calculator({ workouts, allowSound }) {
         </div>
       </form>
       <section>
-        <button onClick={() => {}}>–</button>
+        <button onClick={handleDec}>–</button>
         <p>
           {mins < 10 && "0"}
           {mins}:{seconds < 10 && "0"}
           {seconds}
         </p>
-        <button onClick={() => {}}>+</button>
+        <button onClick={handleInc}>+</button>
       </section>
     </>
   );
