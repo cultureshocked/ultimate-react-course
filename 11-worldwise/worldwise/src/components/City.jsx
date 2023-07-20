@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams /*useSearchParams*/ } from "react-router-dom";
 import styles from "./City.module.css";
 import { useEffect } from "react";
 import { useCities } from "../contexts/CityContext";
@@ -15,7 +15,7 @@ const formatDate = (date) =>
 
 function City() {
   const { id } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
 
   const { getCity, currentCity, isLoading } = useCities();
   // TEMP DATA
@@ -30,7 +30,7 @@ function City() {
     function () {
       getCity(id);
     },
-    [id]
+    [id, getCity]
   );
 
   const { cityName, emoji, date, notes } = currentCity;
